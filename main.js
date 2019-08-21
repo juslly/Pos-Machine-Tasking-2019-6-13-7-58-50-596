@@ -11,90 +11,59 @@ const database = [
     {"id": "0010", "name" : "Fanta", "price": 12}
 ];
 
-function printReceipt (barcodeArray) {
-    let checkResult = checkInput(barcodeArray);
-    if(checkResult!=="Success"){
-        return checkResult;
-    }else{
-        return getReceipt(barcodeArray);
+
+function splitBarcodes(barcodes){
+    var barcodeArr = new Array();
+    var splitInput = barcodes.split(",");
+    for(var i =0;i<splitInput.length;i++){
+        barcodeArr[i] = splitInput[i].replace(/[^0-9]/ig,"");
     }
+    return barcodeArr;
 }
 
-
-function checkInput(barcodeArray){
-    let checkResult;
-    if(barcodeArray.length === 0){
-        checkResult = "无输入信息";
-    }else if(barcodeArray.length > 1000){
-        checkResult = "内存超出限制";           // 不再测试
-    }else if(!isValidInput(barcodeArray)){
-            checkResult = "输入的ID包含无效信息";
-    }else {
-            checkResult = "Success";
+function checkBarcode(barcodeArr){
+    let resultCheck;
+    if(barcodeArr.length == 0 ){
+        resultCheck = "输入的商品为空，请重新输入";
+    }else if(barcodeArr.length > 1000){
+        resultCheck = "输入的商品超出正常数量，请检查问题";
+    }else if(!isValidateInput(barcodeArray)){
+        resultCheck = "输入的ID无效信息,请重新输入";
+    }else{
+        resultCheck = "正确";
     }
     return checkResult;
 }
-
-function isValidInput(barcodeArray) {
+function isValidateInput(barcodeArr){
     let inputNum = 0;
-    for (let i=0; i<barcodeArray.length; i++){
+    for (let i=0; i<barcodeArr.length; i++){
         for (let j=0; j<database.length; j++){
-            if(barcodeArray[i]===database[j].id){
+            if(barcodeArr[i]===database[j].id){
                 inputNum++;
             }
         }
-        if(barcodeArray[i] ===""){
+        if(barcodeArr[i] ===""){
             inputNum++;
         }
     }
-    return inputNum === barcodeArray.length
+    return inputNum === barcodeArr.length
+
+}
+function queryDB(barcodes){
+   
 }
 
-function getCollection(barcodeArray) {
-    let returnCollection = [];
-    let barcodeMap = new Map();
-    for(let i=0; i<barcodeArray.length; i++){
-        if(barcodeMap.get(barcodeArray[i])==null){
-            barcodeMap.set(barcodeArray[i],1);
-        }else {
-            barcodeMap.set(barcodeArray[i],barcodeMap.get(barcodeArray[i])+1);
-        }
-    }
 
-    barcodeMap.forEach(function (value,key) {
-        returnCollection.push({id:key,count:value})
-    });
+function calculateNum(firstNumber, secondNumber){
 
-    return returnCollection;
+   
 }
 
-function getReceipt (barcodeArray) {
-    let receipt = [];
-    let totalMoney =0 ;
-    let collection = getCollection(barcodeArray);
-    for (let i=0; i<collection.length; i++){
-        for (let j=0; j<database.length; j++){
-            if(collection[i].id===database[j].id){
-                // 得到 sameObjectB 对象
-                let object = database.filter((p) => {
-                    return p.id === database[j].id;
-                });
-                totalMoney += object[0].price*collection[i].count;
-                receipt+=object[0].name;
-                for(let i=0;i< (20-object[0].name.length);i++){receipt+=" ";}
-                receipt+=object[0].price+"          "+collection[i].count+"\n";
-            }
-        }
-    }
 
-    receipt = "Receipts\n" +
-        "-----------------------------------\n" +
-        receipt +
-        "-----------------------------------\n" +
-        "Price:"+totalMoney;
+function printReceipt(firstNumber, secondNumber){
 
-    return receipt;
+
+    return multilyTable;
 }
-
 
 module.exports = printReceipt;
