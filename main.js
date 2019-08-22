@@ -49,21 +49,113 @@ function isValidateInput(barcodeArr){
     return inputNum === barcodeArr.length
 
 }
-function queryDB(barcodes){
-   
+
+
+
+
+function countItems(barcodes){
+
+    let result = [];
+    for(let i = 0;i<barcodes.length;i++){
+        let index = result.findIndex((item)=>item.id ===barcodes[i]);
+        if(index>-1){
+            result[index] = {
+                id:barcodes[i],
+                count: result[index].count + 1
+            };
+            }else{
+                result.push({id:barcodes[i],count:1});
+            }
+        }
+        console.log("zhangjing");
+        return result;
+
+    // let resultCountArr = new Array();
+    // let idArr = new Array();
+    // let splitInput = barcodes.split(",");
+    // for(let i =0 ;i<splitInput.length;i++){
+    //     idArr.push(splitInput.replace(/[^0-9]/ig,""));
+    // }
+    // const map = new Map();
+    // for(let i = 0;i<idArr.length;i++){
+    //     if (map.get(idArr[i])==null){
+    //         map.set(idArr[i],1);
+
+    //     }else{
+    //         map.set(idArr[i],map.get(idArr[i])+1);
+    //     }
+    // }
+
+    // return resultCountArr;
+
+}
+
+function getItems(countArr){
+    let result = [];
+    let queryInf = {};
+    for(let i= 0;i<countArr.length;i++){
+        queryInf = queryItems(countArr[i].id);
+        queryInf.count = countArr[i].count;
+        result.push(queryInf);
+    }
+    return result;
+
 }
 
 
-function calculateNum(firstNumber, secondNumber){
-
-   
+function queryItems(itemId){
+    let result;
+    for(let i = 0; i < database.length;i++){
+        if(itemId == database[i].id){
+            return database[i];
+        }
+    }
 }
 
 
-function printReceipt(firstNumber, secondNumber){
-
-
-    return multilyTable;
+function calculateNum(queryItem){
+    let result = 0;
+    
+    for(let i = 0;i<queryItem.length;i++){
+       result = result + calculateSumPrice(queryItem[i]);
+    }
+  
+    console.log("jingjing"+result);
+    return result; 
 }
+
+
+function calculateSumPrice(queryItem){
+   // let sum = queryItem.price*queryItem.count;
+    let inf = queryItem.price*queryItem.count;
+    return inf;
+}
+
+
+function printReceipt(){
+    let result = "";
+    barcodes = ['0001', '0003', '0005', '0003'];
+    let countArr = countItems(barcodes);
+    let items = getItems(countArr);
+    result = print(items);
+    // result = calculateNum(items);
+    return result;
+    
+}
+
+function print(items){
+    let title = "Receipts"+"\n";
+    let line = "------------------------------------------------------------"+"\n";
+    let value = "";
+    for(let i=0;i<items.length;i++){
+        value = value+items[i].name+"                   "+items[i].price+"         "+ items[i].count+"\n";
+    }
+    let line1 = "------------------------------------------------------------"+"\n";
+    let sum = "Price:" + calculateNum(items);
+    console.log(title+line+value+line1+sum);
+    return title+line+value+line1+sum;
+
+}
+
 
 module.exports = printReceipt;
